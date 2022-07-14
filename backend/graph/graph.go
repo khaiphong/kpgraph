@@ -25,8 +25,8 @@ type Persona struct {
     Props       map[string]string
 }
 
-// each service must have it Url for internet access. The service Home is its
-// facebook clone for further information e.g Activities, Relationships, Places
+// each service must have its Url for internet access. The service Home is its
+// facebook clone for further information e.g activities, relationships, places
 type Service struct {
     Url         string
     ServiceName string
@@ -38,17 +38,17 @@ type Service struct {
     Props       map[string]string
 }
 
-// Relationship is a directed graph from one Vertex to another Vertex
-// It can be a Vertex for organization structure and for relationship
+// Relationship is a directed graph from one Node to another Node
+// It can be a Node for organization structure and for relationship
 // cultivation and/or grooming to a certain position
-type Relationship struct { // can be a node to cultivate
+type Relationship struct { // can be a Node to cultivate
     Id          string `json:  "id"`
     Name        string
     CurrentPost string
     TargetPost  string
     Props       map[string]string
 }
-type Organization struct { // can be a node and have many services
+type Organization struct { // can be a Node and have many services
     Id          string `json:  "id"`
     Name        string
     //   Services    [service.Service]
@@ -61,19 +61,19 @@ type Code struct {
 }
 
 // cultivating Inner Space of persona or organization properties Props. It is
-// ML vertices from the grass roots for shaping persona or organization culture
-type Fibonacci struct { // can be a patterned node from persona
+// ML nodes from the grass roots for shaping persona or organization culture
+type Fibonacci struct { // can be a patterned Node from persona
     Id          string `json:  "id"`
     Name        string
     Props       map[string]string
 }
 // Family cultivation and connecting tree
-type Family struct { // is anode
+type Family struct { // is a Node
     Id          string `json:  "id"`
     Name        string
     Props       map[string]string
 }
-// CoOp node for community GsLp ThankYou club and its vibrant economics
+// CoOp Node for community GsLp ThankYou club and its vibrant economics
 type GsLp struct { // is a node
     Id          string `json:  "id"`
     Name        string
@@ -82,27 +82,27 @@ type GsLp struct { // is a node
 
 // Graph represents an adjacency list graph
 type Graph struct {
-    vertices []*Vertex
+    nodes []*Node
     lock        sync.RWMutex
 }
 
-// Vertex represents a graph vertex, run Golang 1.8 for generic Vertex.
-// specialized properties and processes applied, improved searches
-// type Vertex struct { value GenericVertex }
-type GenericVertex interface {
+// Node represents a graph Node, run Golang 1.8 for generic Node.
+// Specialized properties and processes applied, improved searches
+// type Node struct { value GenericNode }
+type GenericNode interface {
     Persona | Relationship | Organization | Code | Fibonacci | 
     Service | Family | GsLp
 }
-type Vertex struct {
+type Node struct {
     key int // unique key from Pdb
-    adjacent    []*Vertex
-    owners      []*Vertex
+    adjacent    []*Node
+    owners      []*Node
 }
 
-// AddVertex adds a vertex to the graph
-func (g *Graph) AddVertex(k int) {
+// AddNode adds a Node to the graph
+func (g *Graph) AddNode(k int) {
     g.lock.Lock()
-    g.vertices = append(g.vertices, &Vertex{key: k})
+    g.nodes = append(g.nodes, &Node{key: k})
     g.lock.Unlock()
 }    
  
@@ -111,29 +111,29 @@ func (g *Graph) AddVertex(k int) {
 func (g *Graph) AddEdge(from, to int) {
     g.lock.Lock()
     // get Vertex
-    fromVertex := g.getVertex(from)
-    toVertex := g.getVertex(to)
+    fromNode := g.getNode(from)
+    toNode := g.getNode(to)
     // check error
     // add edge
-    fromVertex.adjacent = append(fromVertex.adjacent, toVertex)
+    fromNode.adjacent = append(fromNode.adjacent, toNode)
     g.lock.Unlock()
 }
 
 
-// getVertex returns a pointer to the Vertex with a key integer
-func (g *Graph) getVertex(k int) *Vertex {
-    for i, v := range g.vertices {
+// getNode returns a pointer to the Node with a key integer
+func (g *Graph) getNode(k int) *Node {
+    for i, v := range g.nodes {
         if v.key == k {
-            return g.vertices[i]
+            return g.nodes[i]
         }
     }
     return nil
 }
 
-// Print will print the adjacent list for each vertiex of the graph
+// Print will print the adjacent list for each Node of the graph
 func (g *Graph) Print() {
-    for _,v := range g.vertices {
-        fmt.Printf("\nVertex %v: ", v.key)
+    for _,v := range g.nodes {
+        fmt.Printf("\n Node %v: ", v.key)
         for _,v := range v.adjacent {
             fmt.Printf(" %v ", v.key)
         }
@@ -154,7 +154,7 @@ func main(){
     test := &Graph{}
 
     for i := 0; i < 5; i++ {
-        test.AddVertex(i)
+        test.AddNode(i)
     }
 
     test.AddEdge(1, 2)
