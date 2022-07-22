@@ -14,10 +14,10 @@ import (
 )
 
 // GraphQL with EIP as entry point to Url of requested service. Persona Home
-// is the user facebook clone
+// is the user facebook clone. Id for property graph and Name for RDF*
 type Persona struct {
     Id      string `json:  "id"`
-    Name    string
+    Name    string `json:  "name"`
     HomePage    string
     Url         string
  //   Service     service.Service
@@ -28,8 +28,9 @@ type Persona struct {
 // each service must have its Url for internet access. The service Home is its
 // facebook clone for further information e.g activities, relationships, places
 type Service struct {
-    Url         string
-    ServiceName string
+    Id          string `json:  "id"`
+    Name        string `json:  "name"`
+    Url         string `json:  "url"`
     Pdb         string
     HomePage    string
     Invoice     string
@@ -42,41 +43,42 @@ type Service struct {
 // It can be a Node for organization structure and for relationship
 // cultivation and/or grooming to a certain position
 type Relationship struct { // can be a Node to cultivate
-    Id          string `json:  "id"`
-    Name        string
-    CurrentPost string
-    TargetPost  string
+    Id      string `json:  "id"`
+    Name    string `json:  "name"`
+    Label   string
+    Current string
+    Target  string
     Props       map[string]string
 }
 type Organization struct { // can be a Node and have many services
-    Id          string `json:  "id"`
-    Name        string
+    Id      string `json:  "id"`
+    Name    string `json:  "name"`
     //   Services    [service.Service]
     Props       map[string]string
 }
 type Code struct {
-    Id          string `json:  "id"`
-    Name        string
+    Id      string `json:  "id"`
+    Name    string `json:  "name"`
     Props       map[string]string
 }
 
 // cultivating Inner Space of persona or organization properties Props. It is
 // ML nodes from the grass roots for shaping persona or organization culture
 type Fibonacci struct { // can be a patterned Node from persona
-    Id          string `json:  "id"`
-    Name        string
+    Id      string `json:  "id"`
+    Name    string `json:  "name"`
     Props       map[string]string
 }
 // Family cultivation and connecting tree
 type Family struct { // is a Node
-    Id          string `json:  "id"`
-    Name        string
+    Id      string `json:  "id"`
+    Name    string `json:  "name"`
     Props       map[string]string
 }
 // CoOp Node for community GsLp ThankYou club and its vibrant economics
 type GsLp struct { // is a node
-    Id          string `json:  "id"`
-    Name        string
+    Id      string `json:  "id"`
+    Name    string `json:  "name"`
     Props       map[string]string
 }
 
@@ -95,6 +97,7 @@ type GenericNode interface {
 }
 type Node struct {
     key int // unique key from Pdb
+    label   string // relationship must be defined
     adjacent    []*Node
     owners      []*Node
 }
@@ -104,15 +107,15 @@ func (g *Graph) AddNode(k int) {
     g.lock.Lock()
     g.nodes = append(g.nodes, &Node{key: k})
     g.lock.Unlock()
-}    
- 
+} 
 
 // AddEdge adds an edge to the graph
-func (g *Graph) AddEdge(from, to int) {
+func (g *Graph) AddEdge(from, to, relationship int) {
     g.lock.Lock()
     // get Vertex
     fromNode := g.getNode(from)
     toNode := g.getNode(to)
+ //   label := g.getNode(relationship.label)
     // check error
     // add edge
     fromNode.adjacent = append(fromNode.adjacent, toNode)
@@ -157,6 +160,6 @@ func main(){
         test.AddNode(i)
     }
 
-    test.AddEdge(1, 2)
+    test.AddEdge(1, 2, 18)
     test.Print()
 }
